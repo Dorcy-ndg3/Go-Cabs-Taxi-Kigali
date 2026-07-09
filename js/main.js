@@ -1,4 +1,4 @@
-/* Go cabs&Taxi Kigali — shared behaviour */
+/* GoTaxi Kigali — shared behaviour */
 (function () {
   "use strict";
 
@@ -80,6 +80,25 @@
       });
     });
   }
+
+  /* Google Ads — "Click to call" conversion.
+     Centralised: fires on ANY phone-number (tel:) link across the whole site —
+     nav call block, mobile top-bar call button, hero "Call a Taxi Now",
+     contact rows and footer. Doesn't block the call: gtag sends the ping via
+     sendBeacon, so it completes as the dialer opens. */
+  document.addEventListener("click", function (e) {
+    var t = e.target;
+    if (!t || !t.closest) return;
+    var tel = t.closest('a[href^="tel:"]');
+    if (!tel) return;
+    if (typeof window.gtag === "function") {
+      window.gtag("event", "conversion", {
+        send_to: "AW-18301209032/2PFBCL_31c0cEMiT2ZZE",
+        value: 1.0,
+        currency: "USD"
+      });
+    }
+  }, false);
 
   /* Current year in footer */
   var yearEl = document.getElementById("year");
