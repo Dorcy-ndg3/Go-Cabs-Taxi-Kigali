@@ -431,6 +431,22 @@ p { margin: 0 0 var(--space-3); }
 @media (prefers-reduced-motion: reduce) {
   .hero-content > * { animation: none; opacity: 1; }
 }
+
+/* Cinematic scroll: the video docks into a framed, rounded, gold-edged panel.
+   Scoped to the homepage video hero; transforms are driven from main.js. */
+.hero .hero-media {
+  box-sizing: border-box;
+  overflow: hidden;
+  border: 1.5px solid transparent;
+  transform-origin: center center;
+  will-change: transform;
+  backface-visibility: hidden;
+}
+.hero .hero-content { will-change: transform, opacity; }
+@media (prefers-reduced-motion: reduce) {
+  .hero .hero-media { will-change: auto; }
+  .hero .hero-content { will-change: auto; }
+}
 .hero-content h1 span { color: var(--gold-bright); font-style: italic; }
 .hero-lede {
   font-size: 1.12rem;

@@ -58,6 +58,38 @@
     });
   }
 
+  /* Cinematic hero: scrub the video into a framed, rounded, gold-edged panel
+     as the visitor scrolls the first screen. Transform/opacity only (GPU),
+     rAF-gated, and skipped entirely when reduced motion is requested. */
+  var heroEl = document.querySelector(".hero");
+  var heroMedia = heroEl && heroEl.querySelector(".hero-media");
+  var heroContent = heroEl && heroEl.querySelector(".hero-content");
+  if (heroEl && heroMedia && !reduceMotion) {
+    var heroTicking = false;
+    var clampHero = function (v) { return v < 0 ? 0 : v > 1 ? 1 : v; };
+    var renderHero = function () {
+      heroTicking = false;
+      var h = heroEl.offsetHeight || window.innerHeight;
+      var p = clampHero(window.scrollY / (h * 0.9));
+      var e = p * (2 - p); /* easeOutQuad — quick, then settles */
+      heroMedia.style.transform =
+        "translate3d(0," + (e * 58) + "px,0) scale(" + (1 - e * 0.12) + ")";
+      heroMedia.style.borderRadius = (e * 30) + "px";
+      heroMedia.style.borderColor = "rgba(212,175,97," + (e * 0.55) + ")";
+      heroMedia.style.filter = "brightness(" + (1 - e * 0.12) + ")";
+      if (heroContent) {
+        heroContent.style.transform = "translate3d(0," + (e * -48) + "px,0)";
+        heroContent.style.opacity = "" + clampHero(1 - e * 1.15);
+      }
+    };
+    var onHeroScroll = function () {
+      if (!heroTicking) { heroTicking = true; requestAnimationFrame(renderHero); }
+    };
+    window.addEventListener("scroll", onHeroScroll, { passive: true });
+    window.addEventListener("resize", onHeroScroll, { passive: true });
+    renderHero();
+  }
+
   /* Tour filter (tours page) */
   var pills = document.querySelectorAll(".filter-pill");
   var tourCards = document.querySelectorAll("[data-category]");
